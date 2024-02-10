@@ -1,7 +1,7 @@
 import myAxios from "."
 
-export const getAllUsers = async () => {
-      const { data } = await myAxios.get('/users?limit=100')
+export const getAllUsers = async (query) => {
+      const { data } = await myAxios.get(`/users/search?q=${query}?limit=100`)
       return data;
 }
 
