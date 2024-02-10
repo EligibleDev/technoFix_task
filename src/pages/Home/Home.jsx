@@ -138,17 +138,17 @@ const Home = () => {
 
     return (
         <>
-            <section className="container mx-auto flex justify-between gap-4">
-                <aside className="w-1/4">
+            <section className="container mx-auto flex flex-col lg:flex-row justify-between gap-12 lg:gap-4 px-8 sm:px-0">
+                <aside className="w-full lg:w-1/4">
                     <AddUserForm handleAddUser={handleAddUser} />
                 </aside>
 
-                <div className="w-3/4 space-y-4">
+                <div className="w-full lg:w-3/4 space-y-4">
                     <Filters handleSort={handleSort} handleSearch={handleSearch} />{" "}
                     {loading ? (
                         <LoadingSpinner />
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-5">
                             {users?.map((user) => (
                                 <UserCard user={user} key={user?.id} />
                             ))}
@@ -166,7 +166,7 @@ const Home = () => {
                 >
                     <FaArrowLeft strokeWidth={2} className="h-4 w-4" /> Previous
                 </Button>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-0 lg:gap-2">
                     {Array.from({ length: 12 }).map((_, index) => {
                         const pageNumber = index + 1;
                         return (

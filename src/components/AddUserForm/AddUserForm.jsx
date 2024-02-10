@@ -3,7 +3,7 @@ import { Button, Input } from "@material-tailwind/react";
 const AddUserForm = ({ handleAddUser }) => {
     return (
         <form
-            className="flex flex-col justify-center gap-3 sticky top-4"
+            className="flex flex-col justify-center gap-3 static lg:sticky top-4"
             onSubmit={handleAddUser}
         >
             <Input required type="text" name="firstName" label="First Name" />
