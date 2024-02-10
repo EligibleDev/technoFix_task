@@ -1,17 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { getAllUsers } from "../../api/users";
 import UserCard from "../../components/UserCard/UserCard";
-import { Spinner } from "@material-tailwind/react";
+import { Input, Spinner } from "@material-tailwind/react";
 import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 
 const Home = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [query, setQuery] = useState("");
 
-    const fetchAllUsers = async () => {
+    const handleSearch = async (e) => {
+        const value = e.target.value;
+        setQuery(value);
+    };
+
+    const fetchAllUsers = async (query) => {
         try {
-            const res = await getAllUsers();
+            const res = await getAllUsers(query);
             setUsers(res?.users);
         } catch (error) {
             console.error(error);
@@ -20,15 +26,18 @@ const Home = () => {
     };
 
     useEffect(() => {
-        fetchAllUsers();
+        setLoading(true);
+        fetchAllUsers(query);
         setLoading(false);
-    }, []);
+    }, [query]);
 
     return (
         <>
             <>
                 <section className="container mx-auto flex justify-between">
-                    <aside className="w-1/4">form</aside>
+                    <aside className="w-1/4">
+                        <Input onChange={handleSearch} label="search..." />
+                    </aside>
                     {loading ? (
                         <LoadingSpinner />
                     ) : (
