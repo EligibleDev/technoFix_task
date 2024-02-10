@@ -6,6 +6,7 @@ import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 import Filters from "../../components/Filters/Filters";
 import toast from "react-hot-toast";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
+import AddUserForm from "../../components/AddUserForm/AddUserForm";
 
 const Home = () => {
     const [users, setUsers] = useState([]);
@@ -15,31 +16,42 @@ const Home = () => {
     const [activePage, setActivePage] = useState(1);
     const [skip, setSkip] = useState(0);
 
+    const limit = 9;
+
     const getItemProps = (index) => ({
         variant: activePage === index ? "filled" : "text",
         color: "gray",
-        onClick: () => setActivePage(index),
+        onClick: () => handlePageChange(index),
     });
+
+    const handlePageChange = (pageNumber) => {
+        setActivePage(pageNumber);
+        setSkip((pageNumber - 1) * limit);
+    };
 
     const next = () => {
         if (activePage === 12) return;
 
         setActivePage(activePage + 1);
+        setSkip(skip + limit);
     };
 
     const prev = () => {
         if (activePage === 1) return;
 
         setActivePage(activePage - 1);
+        setSkip(skip - limit);
     };
 
-    const handleSearch = async (e) => {
+    const handleSearch = (e) => {
         const value = e.target.value;
         setQuery(value);
     };
 
     const handleSort = async (e) => {
         const method = e.target.value;
+
+        setLoading(true);
 
         if (method === "name") {
             const sortedUsers = [...users].sort(function (a, b) {
@@ -63,10 +75,10 @@ const Home = () => {
             });
             setUsers(sortedUsers);
         } else {
-            setLoading(true);
             fetchAllUsers(query);
-            setLoading(false);
         }
+
+        setLoading(false);
     };
 
     const handleAddUser = async (e) => {
@@ -108,7 +120,7 @@ const Home = () => {
         }
     };
 
-    const fetchAllUsers = async (query, skip) => {
+    const fetchAllUsers = async (query) => {
         try {
             const res = await getAllUsers(query, skip);
             setUsers(res?.users);
@@ -120,39 +132,15 @@ const Home = () => {
 
     useEffect(() => {
         setLoading(true);
-        fetchAllUsers(query, skip);
+        fetchAllUsers(query);
         setLoading(false);
-        console.log();
     }, [query, skip]);
 
     return (
         <>
             <section className="container mx-auto flex justify-between gap-4">
                 <aside className="w-1/4">
-                    <form
-                        className="flex flex-col justify-center gap-3 sticky top-4"
-                        onSubmit={handleAddUser}
-                    >
-                        <Input required type="text" name="firstName" label="First Name" />
-                        <Input required type="text" name="lastName" label="Last Name" />
-                        <Input
-                            required
-                            type="text"
-                            name="position"
-                            label="Job Position"
-                        />
-                        <Input
-                            required
-                            type="text"
-                            name="company"
-                            label="Company's Name"
-                        />
-                        <Input required type="text" name="email" label="Email Address" />
-                        <Input required type="text" name="address" label="Address" />
-                        <Input required type="text" name="city" label="City" />
-                        <input name="image" required type="file" />
-                        <Button type="submit">Add User</Button>
-                    </form>
+                    <AddUserForm handleAddUser={handleAddUser} />
                 </aside>
 
                 <div className="w-3/4 space-y-4">
@@ -179,17 +167,24 @@ const Home = () => {
                     <FaArrowLeft strokeWidth={2} className="h-4 w-4" /> Previous
                 </Button>
                 <div className="flex items-center gap-2">
-                    <IconButton {...getItemProps(1)}>1</IconButton>
-                    <IconButton {...getItemProps(2)}>2</IconButton>
-                    <IconButton {...getItemProps(3)}>3</IconButton>
-                    <IconButton {...getItemProps(4)}>4</IconButton>
-                    <IconButton {...getItemProps(5)}>5</IconButton>
+                    {Array.from({ length: 12 }).map((_, index) => {
+                        const pageNumber = index + 1;
+                        return (
+                            <IconButton
+                                key={pageNumber}
+                                className=""
+                                {...getItemProps(pageNumber)}
+                            >
+                                {pageNumber}
+                            </IconButton>
+                        );
+                    })}
                 </div>
                 <Button
                     variant="text"
                     className="flex items-center gap-2"
                     onClick={next}
-                    disabled={activePage === 5}
+                    disabled={activePage === 12}
                 >
                     Next
                     <FaArrowRight strokeWidth={2} className="h-4 w-4" />
